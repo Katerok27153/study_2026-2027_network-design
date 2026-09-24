@@ -29,7 +29,6 @@ function lab() {
 	for i in $(seq -f "%02g" 1 ${number}); do
 		mkdir -p labs/lab"${i}"
 		cp -R template/report/report labs/lab"${i}"
-		cp -R template/presentation/presentation labs/lab"${i}"
 		find labs/lab"${i}" -iname "*.qmd" -exec bash -c 'mv "$0" "$(dirname "$0")/${COURSE}-lab"${i}"-$(basename "$0")"' "{}" \;
 	done
 	echo "# Laboratory works" >labs/README.md
