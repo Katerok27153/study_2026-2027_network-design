@@ -1,0 +1,190 @@
+\begin{MintedVerbatim}[commandchars=\\\{\},codes={\catcode`\$=3\catcode`\^=7\catcode`\_=8\relax}]
+\PYG{c}{\PYGZsh{} 1. Импорт библиотек}
+
+\PYG{k}{using}\PYG{+w}{ }\PYG{n}{Pkg}
+\PYG{n}{Pkg}\PYG{o}{.}\PYG{n}{add}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}Plots\PYGZdq{}}\PYG{p}{)}\PYG{+w}{   }\PYG{c}{\PYGZsh{} устанавливает пакет для построения графиков}
+\PYG{k}{using}\PYG{+w}{ }\PYG{n}{Plots}\PYG{+w}{        }\PYG{c}{\PYGZsh{} подключаем функции plot(), plot!(), xlabel! и т.д.}
+\PYG{k}{using}\PYG{+w}{ }\PYG{n}{Printf}\PYG{+w}{ }\PYG{c}{\PYGZsh{} знаки после запятой}
+
+\PYG{c}{\PYGZsh{} 2. Ввод исходных данных}
+
+\PYG{n}{print}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}Введите ёмкость соты C (целое число): \PYGZdq{}}\PYG{p}{)}
+\PYG{n}{C}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{parse}\PYG{p}{(}\PYG{k+kt}{Int}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{readline}\PYG{p}{())}
+
+\PYG{n}{print}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}Введите полнодоступную часть пропускной способности соты g: \PYGZdq{}}\PYG{p}{)}
+\PYG{n}{g}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{parse}\PYG{p}{(}\PYG{k+kt}{Int}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{readline}\PYG{p}{())}
+
+\PYG{n}{print}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}Введите интенсивность обслуживания μ: \PYGZdq{}}\PYG{p}{)}
+\PYG{n}{mu}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{parse}\PYG{p}{(}\PYG{k+kt}{Float64}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{readline}\PYG{p}{())}
+
+\PYG{n}{print}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}Введите интенсивность λ1: \PYGZdq{}}\PYG{p}{)}
+\PYG{n}{lambda1}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{parse}\PYG{p}{(}\PYG{k+kt}{Float64}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{readline}\PYG{p}{())}
+
+\PYG{n}{print}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}Введите интенсивность λ2: \PYGZdq{}}\PYG{p}{)}
+\PYG{n}{lambda2}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{parse}\PYG{p}{(}\PYG{k+kt}{Float64}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{readline}\PYG{p}{())}
+
+\PYG{c}{\PYGZsh{}\PYGZsh{} 2.1 Интенсивность предложенной нагрузки: ρ = λ / μ}
+\PYG{n}{rho1}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{lambda1}\PYG{+w}{ }\PYG{o}{/}\PYG{+w}{ }\PYG{n}{mu}
+\PYG{n}{rho2}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{lambda2}\PYG{+w}{ }\PYG{o}{/}\PYG{+w}{ }\PYG{n}{mu}
+
+\PYG{n}{println}\PYG{p}{()}
+\PYG{n}{println}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}Введены данные: C=}\PYG{l+s+si}{\PYGZdl{}C}\PYG{l+s}{, g=}\PYG{l+s+si}{\PYGZdl{}g}\PYG{l+s}{, μ=}\PYG{l+s+si}{\PYGZdl{}mu}\PYG{l+s}{, λ1=}\PYG{l+s+si}{\PYGZdl{}lambda1}\PYG{l+s}{, λ2=}\PYG{l+s+si}{\PYGZdl{}lambda2}\PYG{l+s}{\PYGZdq{}}\PYG{p}{)}
+
+\PYG{c}{\PYGZsh{} 3. Функции расчёта характеристик модели}
+
+\PYG{c}{\PYGZsh{}\PYGZsh{} 3.1 Стационарное распределение вероятностей состояний системы p(n)}
+\PYG{k}{function}\PYG{+w}{ }\PYG{n}{stationary\PYGZus{}probability}\PYG{p}{(}\PYG{n}{rho1}\PYG{o}{::}\PYG{k+kt}{Float64}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{rho2}\PYG{o}{::}\PYG{k+kt}{Float64}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{C}\PYG{o}{::}\PYG{k+kt}{Int}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{g}\PYG{o}{::}\PYG{k+kt}{Int}\PYG{p}{)}
+\PYG{+w}{    }\PYG{n}{rho\PYGZus{}sum}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{rho1}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{n}{rho2}
+
+\PYG{+w}{    }\PYG{n}{part\PYGZus{}sum}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mf}{0.0}
+
+\PYG{+w}{    }\PYG{c}{\PYGZsh{} первая сумма: n = 1,...,g}
+\PYG{+w}{    }\PYG{k}{for}\PYG{+w}{ }\PYG{n}{n}\PYG{+w}{ }\PYG{k}{in}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{o}{:}\PYG{n}{g}
+\PYG{+w}{        }\PYG{n}{part\PYGZus{}sum}\PYG{+w}{ }\PYG{o}{+=}\PYG{+w}{ }\PYG{n}{rho\PYGZus{}sum}\PYG{o}{\PYGZca{}}\PYG{n}{n}\PYG{+w}{ }\PYG{o}{/}\PYG{+w}{ }\PYG{n}{factorial}\PYG{p}{(}\PYG{n}{big}\PYG{p}{(}\PYG{n}{n}\PYG{p}{))}
+\PYG{+w}{    }\PYG{k}{end}
+
+\PYG{+w}{    }\PYG{c}{\PYGZsh{} вторая сумма: n = g+1,...,C}
+\PYG{+w}{    }\PYG{k}{for}\PYG{+w}{ }\PYG{n}{n}\PYG{+w}{ }\PYG{k}{in}\PYG{+w}{ }\PYG{n}{g}\PYG{o}{+}\PYG{l+m+mi}{1}\PYG{o}{:}\PYG{n}{C}
+\PYG{+w}{        }\PYG{n}{part\PYGZus{}sum}\PYG{+w}{ }\PYG{o}{+=}\PYG{+w}{ }\PYG{n}{rho\PYGZus{}sum}\PYG{o}{\PYGZca{}}\PYG{n}{g}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{n}{rho1}\PYG{o}{\PYGZca{}}\PYG{p}{(}\PYG{n}{n}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{n}{g}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{/}\PYG{+w}{ }\PYG{n}{factorial}\PYG{p}{(}\PYG{n}{big}\PYG{p}{(}\PYG{n}{n}\PYG{p}{))}
+\PYG{+w}{    }\PYG{k}{end}
+
+\PYG{+w}{    }\PYG{n}{p0}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mf}{1.0}\PYG{+w}{ }\PYG{o}{/}\PYG{+w}{ }\PYG{n}{part\PYGZus{}sum}\PYG{+w}{ }\PYG{c}{\PYGZsh{} p0 \PYGZhy{} константа, общая для всех состояний}
+
+\PYG{+w}{    }\PYG{c}{\PYGZsh{} считаем p(n) для каждого состояния}
+\PYG{+w}{    }\PYG{n}{p}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{zeros}\PYG{p}{(}\PYG{k+kt}{Float64}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{C}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{)}
+
+\PYG{+w}{    }\PYG{k}{for}\PYG{+w}{ }\PYG{n}{n}\PYG{+w}{ }\PYG{k}{in}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{o}{:}\PYG{n}{C}
+\PYG{+w}{        }\PYG{k}{if}\PYG{+w}{ }\PYG{n}{n}\PYG{+w}{ }\PYG{o}{\PYGZlt{}=}\PYG{+w}{ }\PYG{n}{g}
+\PYG{+w}{            }\PYG{c}{\PYGZsh{} полнодоступная часть}
+\PYG{+w}{            }\PYG{n}{p}\PYG{p}{[}\PYG{n}{n}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{]}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{p0}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{n}{rho\PYGZus{}sum}\PYG{o}{\PYGZca{}}\PYG{n}{n}\PYG{+w}{ }\PYG{o}{/}\PYG{+w}{ }\PYG{n}{factorial}\PYG{p}{(}\PYG{n}{big}\PYG{p}{(}\PYG{n}{n}\PYG{p}{))}
+\PYG{+w}{        }\PYG{k}{else}
+\PYG{+w}{            }\PYG{c}{\PYGZsh{} зарезервированная часть n!}
+\PYG{+w}{            }\PYG{n}{p}\PYG{p}{[}\PYG{n}{n}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{]}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{p0}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{n}{rho\PYGZus{}sum}\PYG{o}{\PYGZca{}}\PYG{n}{g}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{n}{rho1}\PYG{o}{\PYGZca{}}\PYG{p}{(}\PYG{n}{n}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{n}{g}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{/}\PYG{+w}{ }\PYG{n}{factorial}\PYG{p}{(}\PYG{n}{big}\PYG{p}{(}\PYG{n}{n}\PYG{p}{))}
+\PYG{+w}{        }\PYG{k}{end}
+\PYG{+w}{    }\PYG{k}{end}
+
+\PYG{+w}{    }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{p}
+\PYG{k}{end}
+
+\PYG{c}{\PYGZsh{}\PYGZsh{} 3.2 Вероятность блокировки по времени E1}
+\PYG{k}{function}\PYG{+w}{ }\PYG{n}{time\PYGZus{}blocking\PYGZus{}probability\PYGZus{}E1}\PYG{p}{(}\PYG{n}{p}\PYG{o}{::}\PYG{k+kt}{Vector}\PYG{p}{\PYGZob{}}\PYG{k+kt}{Float64}\PYG{p}{\PYGZcb{},}\PYG{+w}{ }\PYG{n}{C}\PYG{o}{::}\PYG{k+kt}{Int}\PYG{p}{)}
+\PYG{+w}{    }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{p}\PYG{p}{[}\PYG{n}{C}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{]}
+\PYG{k}{end}
+
+\PYG{c}{\PYGZsh{}\PYGZsh{} 3.3 Вероятность блокировки по времени E2}
+\PYG{k}{function}\PYG{+w}{ }\PYG{n}{time\PYGZus{}blocking\PYGZus{}probability\PYGZus{}E2}\PYG{p}{(}\PYG{n}{p}\PYG{o}{::}\PYG{k+kt}{Vector}\PYG{p}{\PYGZob{}}\PYG{k+kt}{Float64}\PYG{p}{\PYGZcb{},}\PYG{+w}{ }\PYG{n}{C}\PYG{o}{::}\PYG{k+kt}{Int}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{g}\PYG{o}{::}\PYG{k+kt}{Int}\PYG{p}{)}
+\PYG{+w}{    }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{sum}\PYG{p}{(}\PYG{n}{p}\PYG{p}{[}\PYG{n}{g}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{+w}{ }\PYG{o}{:}\PYG{+w}{ }\PYG{n}{C}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{])}
+\PYG{k}{end}
+
+\PYG{c}{\PYGZsh{}\PYGZsh{} 3.4 Среднее число обслуживаемых в системе запросов}
+\PYG{k}{function}\PYG{+w}{ }\PYG{n}{average\PYGZus{}requests}\PYG{p}{(}\PYG{n}{p}\PYG{o}{::}\PYG{k+kt}{Vector}\PYG{p}{\PYGZob{}}\PYG{k+kt}{Float64}\PYG{p}{\PYGZcb{},}\PYG{+w}{ }\PYG{n}{C}\PYG{o}{::}\PYG{k+kt}{Int}\PYG{p}{)}
+\PYG{+w}{    }\PYG{n}{N}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mf}{0.0}
+\PYG{+w}{    }\PYG{k}{for}\PYG{+w}{ }\PYG{n}{n}\PYG{+w}{ }\PYG{k}{in}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{o}{:}\PYG{n}{C}
+\PYG{+w}{        }\PYG{n}{N}\PYG{+w}{ }\PYG{o}{+=}\PYG{+w}{ }\PYG{n}{n}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{n}{p}\PYG{p}{[}\PYG{n}{n}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{]}
+\PYG{+w}{    }\PYG{k}{end}
+\PYG{+w}{    }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{N}
+\PYG{k}{end}
+
+\PYG{c}{\PYGZsh{} 4. Расчёт и вывод стационарного распределения p(n)}
+
+\PYG{n}{p}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{stationary\PYGZus{}probability}\PYG{p}{(}\PYG{n}{rho1}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{rho2}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{C}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{g}\PYG{p}{)}
+
+\PYG{n}{println}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}=== Стационарное распределение вероятностей p(n) ===\PYGZdq{}}\PYG{p}{)}
+\PYG{k}{for}\PYG{+w}{ }\PYG{n}{n}\PYG{+w}{ }\PYG{k}{in}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{o}{:}\PYG{n}{C}
+\PYG{+w}{    }\PYG{n+nd}{@printf}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}p(}\PYG{l+s+si}{\PYGZpc{}d}\PYG{l+s}{) = }\PYG{l+s+si}{\PYGZpc{}.10f}\PYG{l+s+se}{\PYGZbs{}n}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{n}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{p}\PYG{p}{[}\PYG{n}{n}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{])}
+\PYG{k}{end}
+
+\PYG{c}{\PYGZsh{}\PYGZsh{} 4.1 Проверка условия нормировки: сумма всех p(n) должна быть равна 1}
+\PYG{n}{total}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{sum}\PYG{p}{(}\PYG{n}{p}\PYG{p}{)}
+\PYG{n}{println}\PYG{p}{()}
+\PYG{n+nd}{@printf}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}Сумма всех вероятностей: }\PYG{l+s+si}{\PYGZpc{}.10f}\PYG{l+s+se}{\PYGZbs{}n}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{total}\PYG{p}{)}
+
+\PYG{c}{\PYGZsh{} 5. Вероятностные характеристики для введённых данных}
+
+\PYG{c}{\PYGZsh{}\PYGZsh{} 5.1 Вероятность блокировки по времени E1}
+\PYG{n}{E1}\PYG{+w}{  }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{time\PYGZus{}blocking\PYGZus{}probability\PYGZus{}E1}\PYG{p}{(}\PYG{n}{p}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{C}\PYG{p}{)}
+\PYG{n+nd}{@printf}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}Вероятность блокировки по времени E1 = }\PYG{l+s+si}{\PYGZpc{}.10f}\PYG{l+s+se}{\PYGZbs{}n}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{E1}\PYG{p}{)}
+
+\PYG{c}{\PYGZsh{}\PYGZsh{} 5.2 Вероятность блокировки по времени E2}
+\PYG{n}{E2}\PYG{+w}{  }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{time\PYGZus{}blocking\PYGZus{}probability\PYGZus{}E2}\PYG{p}{(}\PYG{n}{p}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{C}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{g}\PYG{p}{)}
+\PYG{n+nd}{@printf}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}Вероятность блокировки по времени E2 = }\PYG{l+s+si}{\PYGZpc{}.10f}\PYG{l+s+se}{\PYGZbs{}n}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{E2}\PYG{p}{)}
+
+\PYG{c}{\PYGZsh{}\PYGZsh{} 5.3 Среднее число обслуживаемых запросов}
+\PYG{n}{N}\PYG{+w}{  }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{average\PYGZus{}requests}\PYG{p}{(}\PYG{n}{p}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{C}\PYG{p}{)}
+\PYG{n+nd}{@printf}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}Среднее число обслуживаемых запросов N = }\PYG{l+s+si}{\PYGZpc{}.10f}\PYG{l+s+se}{\PYGZbs{}n}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{N}\PYG{p}{)}
+
+\PYG{c}{\PYGZsh{} 6. Расчёт данных для графиков (задания 3 и 4)}
+
+\PYG{n}{lambda1\PYGZus{}range}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mf}{0.5}\PYG{o}{:}\PYG{l+m+mf}{0.5}\PYG{o}{:}\PYG{k+kt}{Float64}\PYG{p}{(}\PYG{n}{C}\PYG{p}{)}\PYG{+w}{ }\PYG{c}{\PYGZsh{} последовательность значений λ1 с шагом 0.5}
+
+\PYG{n}{E1\PYGZus{}range}\PYG{+w}{  }\PYG{o}{=}\PYG{+w}{ }\PYG{k+kt}{Float64}\PYG{p}{[]}\PYG{+w}{ }\PYG{c}{\PYGZsh{} 3 пустых массива (результаты для каждой точки диапазона)}
+\PYG{n}{E2\PYGZus{}range}\PYG{+w}{  }\PYG{o}{=}\PYG{+w}{ }\PYG{k+kt}{Float64}\PYG{p}{[]}
+\PYG{n}{N\PYGZus{}range}\PYG{+w}{  }\PYG{o}{=}\PYG{+w}{ }\PYG{k+kt}{Float64}\PYG{p}{[]}
+
+\PYG{k}{for}\PYG{+w}{ }\PYG{n}{lam1}\PYG{+w}{ }\PYG{k}{in}\PYG{+w}{ }\PYG{n}{lambda1\PYGZus{}range}\PYG{+w}{ }\PYG{c}{\PYGZsh{} цикл \PYGZhy{} перебирает каждое значение λ1 из диапазона}
+\PYG{+w}{    }\PYG{n}{rho1\PYGZus{}i}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{lam1}\PYG{+w}{ }\PYG{o}{/}\PYG{+w}{ }\PYG{n}{mu}\PYG{+w}{ }\PYG{c}{\PYGZsh{} пересчитываем ρ1 конкретно под это значение λ1}
+\PYG{+w}{    }\PYG{n}{p\PYGZus{}i}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{stationary\PYGZus{}probability}\PYG{p}{(}\PYG{n}{rho1\PYGZus{}i}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{rho2}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{C}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{g}\PYG{p}{)}\PYG{+w}{ }\PYG{c}{\PYGZsh{} заново считаем всё распределение}
+
+\PYG{+w}{    }\PYG{n}{E1\PYGZus{}i}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{time\PYGZus{}blocking\PYGZus{}probability\PYGZus{}E1}\PYG{p}{(}\PYG{n}{p\PYGZus{}i}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{C}\PYG{p}{)}
+\PYG{+w}{    }\PYG{n}{E2\PYGZus{}i}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{time\PYGZus{}blocking\PYGZus{}probability\PYGZus{}E2}\PYG{p}{(}\PYG{n}{p\PYGZus{}i}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{C}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{g}\PYG{p}{)}
+\PYG{+w}{    }\PYG{n}{N\PYGZus{}i}\PYG{+w}{  }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{average\PYGZus{}requests}\PYG{p}{(}\PYG{n}{p\PYGZus{}i}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{C}\PYG{p}{)}
+
+\PYG{+w}{    }\PYG{n}{push!}\PYG{p}{(}\PYG{n}{E1\PYGZus{}range}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{E1\PYGZus{}i}\PYG{p}{)}\PYG{+w}{ }\PYG{c}{\PYGZsh{} и кладём готовые числа в массивы}
+\PYG{+w}{    }\PYG{n}{push!}\PYG{p}{(}\PYG{n}{E2\PYGZus{}range}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{E2\PYGZus{}i}\PYG{p}{)}
+\PYG{+w}{    }\PYG{n}{push!}\PYG{p}{(}\PYG{n}{N\PYGZus{}range}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{N\PYGZus{}i}\PYG{p}{)}
+\PYG{k}{end}
+
+\PYG{c}{\PYGZsh{} 7. Построение графиков}
+
+\PYG{c}{\PYGZsh{}\PYGZsh{} 7.1 График зависимости вероятности блокировки по времени E1 от интенсивности λ1}
+\PYG{n}{plot\PYGZus{}E1}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{plot}\PYG{p}{(}\PYG{n}{lambda1\PYGZus{}range}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{E1\PYGZus{}range}\PYG{p}{,}
+\PYG{+w}{     }\PYG{n}{label}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}Вероятность блокировки по времени E1\PYGZdq{}}\PYG{p}{,}
+\PYG{+w}{     }\PYG{n}{xlabel}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}Интенсивность поступающих запросов λ1\PYGZdq{}}\PYG{p}{,}
+\PYG{+w}{     }\PYG{n}{ylabel}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}Вероятность\PYGZdq{}}\PYG{p}{,}
+\PYG{+w}{     }\PYG{n}{title}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}Вероятность блокировки по времени E1(λ1)\PYGZdq{}}\PYG{p}{,}
+\PYG{+w}{     }\PYG{n}{linewidth}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{2}\PYG{p}{,}
+\PYG{+w}{     }\PYG{n}{color}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s+ss}{:blue}\PYG{p}{,}
+\PYG{+w}{     }\PYG{n}{legend}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s+ss}{:topleft}\PYG{p}{)}
+\PYG{n}{savefig}\PYG{p}{(}\PYG{n}{plot\PYGZus{}E1}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}blocking\PYGZus{}probability\PYGZus{}E1.png\PYGZdq{}}\PYG{p}{)}
+\PYG{n}{display}\PYG{p}{(}\PYG{n}{plot\PYGZus{}E1}\PYG{p}{)}
+
+\PYG{c}{\PYGZsh{}\PYGZsh{} 7.2 График зависимости вероятности блокировки по времени E2 от интенсивности λ1}
+\PYG{n}{plot\PYGZus{}E2}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{plot}\PYG{p}{(}\PYG{n}{lambda1\PYGZus{}range}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{E2\PYGZus{}range}\PYG{p}{,}
+\PYG{+w}{     }\PYG{n}{label}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}Вероятность блокировки по времени E2\PYGZdq{}}\PYG{p}{,}
+\PYG{+w}{     }\PYG{n}{xlabel}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}Интенсивность поступающих запросов λ1\PYGZdq{}}\PYG{p}{,}
+\PYG{+w}{     }\PYG{n}{ylabel}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}Вероятность\PYGZdq{}}\PYG{p}{,}
+\PYG{+w}{     }\PYG{n}{title}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}Вероятность блокировки по времени E2(λ1)\PYGZdq{}}\PYG{p}{,}
+\PYG{+w}{     }\PYG{n}{linewidth}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{2}\PYG{p}{,}
+\PYG{+w}{     }\PYG{n}{color}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s+ss}{:red}\PYG{p}{,}
+\PYG{+w}{     }\PYG{n}{legend}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s+ss}{:topleft}\PYG{p}{)}
+\PYG{n}{savefig}\PYG{p}{(}\PYG{n}{plot\PYGZus{}E2}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}blocking\PYGZus{}probability\PYGZus{}E2.png\PYGZdq{}}\PYG{p}{)}
+\PYG{n}{display}\PYG{p}{(}\PYG{n}{plot\PYGZus{}E2}\PYG{p}{)}
+
+\PYG{c}{\PYGZsh{}№ 7.3 График зависимости вероятности блокировки по времени E1 и E2 от интенсивности λ1}
+\PYG{n}{plot\PYGZus{}E1\PYGZus{}E2}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{plot}\PYG{p}{(}\PYG{n}{lambda1\PYGZus{}range}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{E1\PYGZus{}range}\PYG{p}{,}
+\PYG{+w}{     }\PYG{n}{label}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}Вероятность блокировки по времени E1\PYGZdq{}}\PYG{p}{,}
+\PYG{+w}{     }\PYG{n}{xlabel}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}Интенсивность поступающих запросов λ1\PYGZdq{}}\PYG{p}{,}
+\PYG{+w}{     }\PYG{n}{ylabel}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}Вероятность\PYGZdq{}}\PYG{p}{,}
+\PYG{+w}{     }\PYG{n}{title}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}Сравнение E1(λ1) и E2(λ1)\PYGZdq{}}\PYG{p}{,}
+\PYG{+w}{     }\PYG{n}{linewidth}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{2}\PYG{p}{,}
+\PYG{+w}{     }\PYG{n}{color}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s+ss}{:blue}\PYG{p}{,}
+\PYG{+w}{     }\PYG{n}{legend}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s+ss}{:topleft}\PYG{p}{)}
+\PYG{n}{plot!}\PYG{p}{(}\PYG{n}{lambda1\PYGZus{}range}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{E2\PYGZus{}range}\PYG{p}{,}
+\PYG{+w}{     }\PYG{n}{label}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}Вероятность блокировки по времени E2\PYGZdq{}}\PYG{p}{,}
+\PYG{+w}{     }\PYG{n}{linewidth}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{2}\PYG{p}{,}
+\PYG{+w}{     }\PYG{n}{color}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s+ss}{:red}\PYG{p}{)}
+\PYG{n}{savefig}\PYG{p}{(}\PYG{n}{plot\PYGZus{}E1\PYGZus{}E2}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}blocking\PYGZus{}probability\PYGZus{}E1\PYGZus{}E2.png\PYGZdq{}}\PYG{p}{)}
+\PYG{n}{display}\PYG{p}{(}\PYG{n}{plot\PYGZus{}E1\PYGZus{}E2}\PYG{p}{)}
+
+\PYG{c}{\PYGZsh{}№ 7.4 График зависимости среднего числа обслуживаемых запросов N от интенсивности λ1}
+\PYG{n}{plot\PYGZus{}N}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{plot}\PYG{p}{(}\PYG{n}{lambda1\PYGZus{}range}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{N\PYGZus{}range}\PYG{p}{,}
+\PYG{+w}{     }\PYG{n}{label}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}Среднее число обслуживаемых запросов N\PYGZdq{}}\PYG{p}{,}
+\PYG{+w}{     }\PYG{n}{xlabel}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}Интенсивность поступающих запросов λ1\PYGZdq{}}\PYG{p}{,}
+\PYG{+w}{     }\PYG{n}{ylabel}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}Среднее число запросов\PYGZdq{}}\PYG{p}{,}
+\PYG{+w}{     }\PYG{n}{title}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}Среднее число запросов N(λ1)\PYGZdq{}}\PYG{p}{,}
+\PYG{+w}{     }\PYG{n}{linewidth}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{2}\PYG{p}{,}
+\PYG{+w}{     }\PYG{n}{color}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s+ss}{:purple}\PYG{p}{,}
+\PYG{+w}{     }\PYG{n}{legend}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s+ss}{:bottomright}\PYG{p}{)}
+\PYG{n}{savefig}\PYG{p}{(}\PYG{n}{plot\PYGZus{}N}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}average\PYGZus{}requests\PYGZus{}N.png\PYGZdq{}}\PYG{p}{)}
+\PYG{n}{display}\PYG{p}{(}\PYG{n}{plot\PYGZus{}N}\PYG{p}{)}
+\end{MintedVerbatim}

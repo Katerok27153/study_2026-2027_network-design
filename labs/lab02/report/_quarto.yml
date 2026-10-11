@@ -6,16 +6,16 @@ standalone: true
 self-contained: true
 
 ## Julia support
-# engine: julia
-# julia:
-#   exeflags: ["--project=../project"]
+engine: julia
+julia:
+  exeflags: ["--project=../project"]
 
 ## Generic options
 lang: ru-RU
 number-sections: true
 toc: true
 toc-title: "Содержание"
-toc-depth: 2
+toc-depth: 3
 ## Crossref customization
 crossref:
   lof-title: "Список иллюстраций"
@@ -31,17 +31,17 @@ format:
   docx:
     toc: true
     number-sections: true
-    toc-depth: 2
+    toc-depth: 3
   ### Pdf output format
   pdf:
     # pdf-engine: xelatex
     ### minted support
-    # filters:
-    #   - minted-quarto
+    filters:
+      - minted-quarto
     toc: true
     number-sections: true
     colorlinks: false
-    toc-depth: 2
+    toc-depth: 3
     lof: true # List of figures
     lot: true # List of tables
     #### Document
