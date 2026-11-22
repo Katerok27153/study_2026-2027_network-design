@@ -1,0 +1,437 @@
+\begin{MintedVerbatim}[commandchars=\\\{\},codes={\catcode`\$=3\catcode`\^=7\catcode`\_=8\relax}]
+\PYG{c}{\PYGZsh{} 1. Импорт библиотек}
+
+\PYG{k}{using}\PYG{+w}{ }\PYG{n}{Pkg}
+\PYG{n}{Pkg}\PYG{o}{.}\PYG{n}{add}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}Plots\PYGZdq{}}\PYG{p}{)}\PYG{+w}{ }\PYG{c}{\PYGZsh{} устанавливает пакет для построения графиков}
+\PYG{k}{using}\PYG{+w}{ }\PYG{n}{Plots}\PYG{+w}{ }\PYG{c}{\PYGZsh{} подключаем функции plot(), plot!(), xlabel! и т.д.}
+\PYG{k}{using}\PYG{+w}{ }\PYG{n}{Printf}\PYG{+w}{ }\PYG{c}{\PYGZsh{} знаки после запятой}
+
+\PYG{c}{\PYGZsh{} 2. Ввод исходных данных}
+
+\PYG{n}{print}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}Введите ёмкость соты C (целое число): \PYGZdq{}}\PYG{p}{)}
+\PYG{n}{C}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{parse}\PYG{p}{(}\PYG{k+kt}{Int}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{readline}\PYG{p}{())}
+
+\PYG{n}{print}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}Введите полнодоступную часть пропускной способности соты g: \PYGZdq{}}\PYG{p}{)}
+\PYG{n}{g}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{parse}\PYG{p}{(}\PYG{k+kt}{Int}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{readline}\PYG{p}{())}
+
+\PYG{n}{print}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}Введите интенсивность λ1: \PYGZdq{}}\PYG{p}{)}
+\PYG{n}{lambda1}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{parse}\PYG{p}{(}\PYG{k+kt}{Float64}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{readline}\PYG{p}{())}
+
+\PYG{n}{print}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}Введите интенсивность λ2: \PYGZdq{}}\PYG{p}{)}
+\PYG{n}{lambda2}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{parse}\PYG{p}{(}\PYG{k+kt}{Float64}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{readline}\PYG{p}{())}
+
+\PYG{n}{print}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}Введите интенсивность обслуживания μ1: \PYGZdq{}}\PYG{p}{)}
+\PYG{n}{mu1}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{parse}\PYG{p}{(}\PYG{k+kt}{Float64}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{readline}\PYG{p}{())}
+
+\PYG{n}{print}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}Введите интенсивность обслуживания μ2: \PYGZdq{}}\PYG{p}{)}
+\PYG{n}{mu2}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{parse}\PYG{p}{(}\PYG{k+kt}{Float64}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{readline}\PYG{p}{())}
+
+\PYG{c}{\PYGZsh{}\PYGZsh{} 2.1 Интенсивность предложенной нагрузки: ρ = λ / μ}
+\PYG{n}{rho1}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{lambda1}\PYG{+w}{ }\PYG{o}{/}\PYG{+w}{ }\PYG{n}{mu1}
+\PYG{n}{rho2}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{lambda2}\PYG{+w}{ }\PYG{o}{/}\PYG{+w}{ }\PYG{n}{mu2}
+
+\PYG{n}{println}\PYG{p}{()}
+\PYG{n}{println}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}Введены данные: C=}\PYG{l+s+si}{\PYGZdl{}C}\PYG{l+s}{, g=}\PYG{l+s+si}{\PYGZdl{}g}\PYG{l+s}{, λ1=}\PYG{l+s+si}{\PYGZdl{}lambda1}\PYG{l+s}{, λ2=}\PYG{l+s+si}{\PYGZdl{}lambda2}\PYG{l+s}{, μ1=}\PYG{l+s+si}{\PYGZdl{}mu1}\PYG{l+s}{, μ2=}\PYG{l+s+si}{\PYGZdl{}mu2}\PYG{l+s}{\PYGZdq{}}\PYG{p}{)}
+
+\PYG{n}{println}\PYG{p}{()}
+\PYG{n}{println}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}Посчитанные данные: ρ1=}\PYG{l+s+si}{\PYGZdl{}rho1}\PYG{l+s}{, ρ2=}\PYG{l+s+si}{\PYGZdl{}rho2}\PYG{l+s}{\PYGZdq{}}\PYG{p}{)}
+\PYG{n}{println}\PYG{p}{()}
+
+\PYG{c}{\PYGZsh{} 3. Функции расчёта характеристик модели}
+
+\PYG{c}{\PYGZsh{}\PYGZsh{} 3.1 Пространство состояний системы X}
+\PYG{k}{function}\PYG{+w}{ }\PYG{n}{state\PYGZus{}space}\PYG{p}{(}\PYG{n}{C}\PYG{o}{::}\PYG{k+kt}{Int}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{g}\PYG{o}{::}\PYG{k+kt}{Int}\PYG{p}{)}
+\PYG{+w}{    }\PYG{c}{\PYGZsh{} пустой список пар (n1, n2)}
+\PYG{+w}{    }\PYG{n}{states}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{k+kt}{Tuple}\PYG{p}{\PYGZob{}}\PYG{k+kt}{Int}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{Int}\PYG{p}{\PYGZcb{}[]}
+
+\PYG{+w}{    }\PYG{k}{for}\PYG{+w}{ }\PYG{n}{n1}\PYG{+w}{ }\PYG{k}{in}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{o}{:}\PYG{n}{g}\PYG{+w}{ }\PYG{c}{\PYGZsh{} заявок 1\PYGZhy{}го типа не больше g}
+\PYG{+w}{        }\PYG{k}{for}\PYG{+w}{ }\PYG{n}{n2}\PYG{+w}{ }\PYG{k}{in}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{o}{:}\PYG{p}{(}\PYG{n}{C}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{n}{n1}\PYG{p}{)}\PYG{+w}{ }\PYG{c}{\PYGZsh{} суммарно заявок не больше C}
+\PYG{+w}{            }\PYG{n}{push!}\PYG{p}{(}\PYG{n}{states}\PYG{p}{,}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{n1}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{n2}\PYG{p}{))}
+\PYG{+w}{        }\PYG{k}{end}
+\PYG{+w}{    }\PYG{k}{end}
+
+\PYG{+w}{    }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{states}
+\PYG{k}{end}
+
+\PYG{c}{\PYGZsh{}\PYGZsh{} 3.2 Стационарное распределение вероятностей состояний системы p(n1, n2)}
+\PYG{k}{function}\PYG{+w}{ }\PYG{n}{stationary\PYGZus{}probability}\PYG{p}{(}\PYG{n}{rho1}\PYG{o}{::}\PYG{k+kt}{Float64}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{rho2}\PYG{o}{::}\PYG{k+kt}{Float64}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{n1}\PYG{o}{::}\PYG{k+kt}{Int}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{n2}\PYG{o}{::}\PYG{k+kt}{Int}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{C}\PYG{o}{::}\PYG{k+kt}{Int}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{g}\PYG{o}{::}\PYG{k+kt}{Int}\PYG{p}{)}
+\PYG{+w}{    }\PYG{c}{\PYGZsh{} считаем нормировочную константу (part\PYGZus{}sum)}
+\PYG{+w}{    }\PYG{n}{part\PYGZus{}sum}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mf}{0.0}
+
+\PYG{+w}{    }\PYG{k}{for}\PYG{+w}{ }\PYG{n}{i}\PYG{+w}{ }\PYG{k}{in}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{o}{:}\PYG{n}{g}
+\PYG{+w}{        }\PYG{k}{for}\PYG{+w}{ }\PYG{n}{j}\PYG{+w}{ }\PYG{k}{in}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{o}{:}\PYG{p}{(}\PYG{n}{C}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{n}{i}\PYG{p}{)}
+\PYG{+w}{            }\PYG{n}{part\PYGZus{}sum}\PYG{+w}{ }\PYG{o}{+=}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{rho1}\PYG{o}{\PYGZca{}}\PYG{n}{i}\PYG{+w}{ }\PYG{o}{/}\PYG{+w}{ }\PYG{n}{factorial}\PYG{p}{(}\PYG{n}{big}\PYG{p}{(}\PYG{n}{i}\PYG{p}{)))}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{rho2}\PYG{o}{\PYGZca{}}\PYG{n}{j}\PYG{+w}{ }\PYG{o}{/}\PYG{+w}{ }\PYG{n}{factorial}\PYG{p}{(}\PYG{n}{big}\PYG{p}{(}\PYG{n}{j}\PYG{p}{)))}
+\PYG{+w}{        }\PYG{k}{end}
+\PYG{+w}{    }\PYG{k}{end}
+
+\PYG{+w}{    }\PYG{n}{p00}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mf}{1.0}\PYG{+w}{ }\PYG{o}{/}\PYG{+w}{ }\PYG{n}{part\PYGZus{}sum}
+
+\PYG{+w}{    }\PYG{c}{\PYGZsh{} вероятность конкретного состояния}
+\PYG{+w}{    }\PYG{n}{unnorm}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{rho1}\PYG{o}{\PYGZca{}}\PYG{n}{n1}\PYG{+w}{ }\PYG{o}{/}\PYG{+w}{ }\PYG{n}{factorial}\PYG{p}{(}\PYG{n}{big}\PYG{p}{(}\PYG{n}{n1}\PYG{p}{)))}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{rho2}\PYG{o}{\PYGZca{}}\PYG{n}{n2}\PYG{+w}{ }\PYG{o}{/}\PYG{+w}{ }\PYG{n}{factorial}\PYG{p}{(}\PYG{n}{big}\PYG{p}{(}\PYG{n}{n2}\PYG{p}{)))}
+\PYG{+w}{    }\PYG{n}{p}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{unnorm}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{n}{p00}
+
+\PYG{+w}{    }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{p}
+\PYG{k}{end}
+
+\PYG{c}{\PYGZsh{}\PYGZsh{} 3.3 Множество блокировок запросов услуги i\PYGZhy{}ого типа}
+\PYG{k}{function}\PYG{+w}{ }\PYG{n}{blocking\PYGZus{}set}\PYG{p}{(}\PYG{n}{X}\PYG{o}{::}\PYG{k+kt}{Vector}\PYG{p}{\PYGZob{}}\PYG{k+kt}{Tuple}\PYG{p}{\PYGZob{}}\PYG{k+kt}{Int}\PYG{p}{,}\PYG{k+kt}{Int}\PYG{p}{\PYGZcb{}\PYGZcb{},}\PYG{+w}{ }\PYG{n}{C}\PYG{o}{::}\PYG{k+kt}{Int}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{g}\PYG{o}{::}\PYG{k+kt}{Int}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{service\PYGZus{}type}\PYG{o}{::}\PYG{k+kt}{Int}\PYG{p}{)}
+\PYG{+w}{    }\PYG{c}{\PYGZsh{} пустой список пар (n1, n2)}
+\PYG{+w}{    }\PYG{n}{Bi}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{k+kt}{Tuple}\PYG{p}{\PYGZob{}}\PYG{k+kt}{Int}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{Int}\PYG{p}{\PYGZcb{}[]}
+
+\PYG{+w}{    }\PYG{k}{for}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{n1}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{n2}\PYG{p}{)}\PYG{+w}{ }\PYG{k}{in}\PYG{+w}{ }\PYG{n}{X}
+\PYG{+w}{        }\PYG{k}{if}\PYG{+w}{ }\PYG{n}{service\PYGZus{}type}\PYG{+w}{ }\PYG{o}{==}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{+w}{ }\PYG{o}{\PYGZam{}\PYGZam{}}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{n1}\PYG{+w}{ }\PYG{o}{==}\PYG{+w}{ }\PYG{n}{g}\PYG{+w}{ }\PYG{o}{||}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{n1}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{n}{n2}\PYG{+w}{ }\PYG{o}{==}\PYG{+w}{ }\PYG{n}{C}\PYG{p}{))}\PYG{+w}{ }\PYG{c}{\PYGZsh{} для i = 1: блокировка, если n1 = g или n1 + n2 = C}
+\PYG{+w}{            }\PYG{n}{push!}\PYG{p}{(}\PYG{n}{Bi}\PYG{p}{,}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{n1}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{n2}\PYG{p}{))}
+\PYG{+w}{        }\PYG{k}{elseif}\PYG{+w}{ }\PYG{n}{service\PYGZus{}type}\PYG{+w}{ }\PYG{o}{==}\PYG{+w}{ }\PYG{l+m+mi}{2}\PYG{+w}{ }\PYG{o}{\PYGZam{}\PYGZam{}}\PYG{+w}{ }\PYG{n}{n1}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{n}{n2}\PYG{+w}{ }\PYG{o}{==}\PYG{+w}{ }\PYG{n}{C}\PYG{+w}{ }\PYG{c}{\PYGZsh{} для i = 2: блокировка, если n1 + n2 = C}
+\PYG{+w}{            }\PYG{n}{push!}\PYG{p}{(}\PYG{n}{Bi}\PYG{p}{,}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{n1}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{n2}\PYG{p}{))}
+\PYG{+w}{        }\PYG{k}{end}
+\PYG{+w}{    }\PYG{k}{end}
+
+\PYG{+w}{    }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{Bi}
+\PYG{k}{end}
+
+\PYG{c}{\PYGZsh{}\PYGZsh{} 3.4 Множество приёма заявок услуги i\PYGZhy{}ого типа}
+\PYG{k}{function}\PYG{+w}{ }\PYG{n}{admission\PYGZus{}set}\PYG{p}{(}\PYG{n}{X}\PYG{o}{::}\PYG{k+kt}{Vector}\PYG{p}{\PYGZob{}}\PYG{k+kt}{Tuple}\PYG{p}{\PYGZob{}}\PYG{k+kt}{Int}\PYG{p}{,}\PYG{k+kt}{Int}\PYG{p}{\PYGZcb{}\PYGZcb{},}\PYG{+w}{ }\PYG{n}{Bi}\PYG{o}{::}\PYG{k+kt}{Vector}\PYG{p}{\PYGZob{}}\PYG{k+kt}{Tuple}\PYG{p}{\PYGZob{}}\PYG{k+kt}{Int}\PYG{p}{,}\PYG{k+kt}{Int}\PYG{p}{\PYGZcb{}\PYGZcb{})}
+
+\PYG{+w}{    }\PYG{c}{\PYGZsh{} пустой список пар (n1, n2)}
+\PYG{+w}{    }\PYG{n}{Si}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{k+kt}{Tuple}\PYG{p}{\PYGZob{}}\PYG{k+kt}{Int}\PYG{p}{,}\PYG{+w}{ }\PYG{k+kt}{Int}\PYG{p}{\PYGZcb{}[]}
+
+\PYG{+w}{    }\PYG{k}{for}\PYG{+w}{ }\PYG{n}{s}\PYG{+w}{ }\PYG{k}{in}\PYG{+w}{ }\PYG{n}{X}
+\PYG{+w}{        }\PYG{k}{if}\PYG{+w}{ }\PYG{o}{!}\PYG{p}{(}\PYG{n}{s}\PYG{+w}{ }\PYG{k}{in}\PYG{+w}{ }\PYG{n}{Bi}\PYG{p}{)}\PYG{+w}{ }\PYG{c}{\PYGZsh{} если s НЕ принадлежит множеству блокировок}
+\PYG{+w}{            }\PYG{n}{push!}\PYG{p}{(}\PYG{n}{Si}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{s}\PYG{p}{)}
+\PYG{+w}{        }\PYG{k}{end}
+\PYG{+w}{    }\PYG{k}{end}
+
+\PYG{+w}{    }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{Si}
+\PYG{k}{end}
+
+\PYG{c}{\PYGZsh{}\PYGZsh{} 3.5 Вероятность блокировки запроса на предоставление услуги i\PYGZhy{}ого типа}
+\PYG{k}{function}\PYG{+w}{ }\PYG{n}{blocking\PYGZus{}probability}\PYG{p}{(}\PYG{n}{Bi}\PYG{o}{::}\PYG{k+kt}{Vector}\PYG{p}{\PYGZob{}}\PYG{k+kt}{Tuple}\PYG{p}{\PYGZob{}}\PYG{k+kt}{Int}\PYG{p}{,}\PYG{k+kt}{Int}\PYG{p}{\PYGZcb{}\PYGZcb{},}\PYG{+w}{ }\PYG{n}{probs}\PYG{o}{::}\PYG{k+kt}{Dict}\PYG{p}{\PYGZob{}}\PYG{k+kt}{Tuple}\PYG{p}{\PYGZob{}}\PYG{k+kt}{Int}\PYG{p}{,}\PYG{k+kt}{Int}\PYG{p}{\PYGZcb{},}\PYG{+w}{ }\PYG{k+kt}{Float64}\PYG{p}{\PYGZcb{})}
+\PYG{+w}{    }\PYG{c}{\PYGZsh{} накопленная вероятность блокировки}
+\PYG{+w}{    }\PYG{n}{Bi\PYGZus{}prob}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mf}{0.0}
+
+\PYG{+w}{    }\PYG{k}{for}\PYG{+w}{ }\PYG{n}{s}\PYG{+w}{ }\PYG{k}{in}\PYG{+w}{ }\PYG{n}{Bi}
+\PYG{+w}{        }\PYG{n}{Bi\PYGZus{}prob}\PYG{+w}{ }\PYG{o}{+=}\PYG{+w}{ }\PYG{n}{probs}\PYG{p}{[}\PYG{n}{s}\PYG{p}{]}\PYG{+w}{ }\PYG{c}{\PYGZsh{} достаём готовую вероятность p(s) и суммируем}
+\PYG{+w}{    }\PYG{k}{end}
+
+\PYG{+w}{    }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{Bi\PYGZus{}prob}
+\PYG{k}{end}
+
+\PYG{c}{\PYGZsh{}\PYGZsh{} 3.6 Среднее число обслуживаемых в системе запросов i\PYGZhy{}ого типа}
+\PYG{k}{function}\PYG{+w}{ }\PYG{n}{average\PYGZus{}requests}\PYG{p}{(}\PYG{n}{probs}\PYG{o}{::}\PYG{k+kt}{Dict}\PYG{p}{\PYGZob{}}\PYG{k+kt}{Tuple}\PYG{p}{\PYGZob{}}\PYG{k+kt}{Int}\PYG{p}{,}\PYG{k+kt}{Int}\PYG{p}{\PYGZcb{},}\PYG{+w}{ }\PYG{k+kt}{Float64}\PYG{p}{\PYGZcb{},}\PYG{+w}{ }\PYG{n}{C}\PYG{o}{::}\PYG{k+kt}{Int}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{g}\PYG{o}{::}\PYG{k+kt}{Int}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{service\PYGZus{}type}\PYG{o}{::}\PYG{k+kt}{Int}\PYG{p}{)}
+\PYG{+w}{    }\PYG{c}{\PYGZsh{} накопленное среднее число заявок i\PYGZhy{}го типа}
+\PYG{+w}{    }\PYG{n}{N\PYGZus{}i}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mf}{0.0}
+
+\PYG{+w}{    }\PYG{k}{for}\PYG{+w}{ }\PYG{n}{n1}\PYG{+w}{ }\PYG{k}{in}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{o}{:}\PYG{n}{g}
+\PYG{+w}{        }\PYG{k}{for}\PYG{+w}{ }\PYG{n}{n2}\PYG{+w}{ }\PYG{k}{in}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{o}{:}\PYG{p}{(}\PYG{n}{C}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{n}{n1}\PYG{p}{)}
+\PYG{+w}{            }\PYG{n}{p}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{probs}\PYG{p}{[(}\PYG{n}{n1}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{n2}\PYG{p}{)]}\PYG{+w}{ }\PYG{c}{\PYGZsh{} готовая вероятность состояния}
+\PYG{+w}{            }\PYG{k}{if}\PYG{+w}{ }\PYG{n}{service\PYGZus{}type}\PYG{+w}{ }\PYG{o}{==}\PYG{+w}{ }\PYG{l+m+mi}{1}
+\PYG{+w}{                }\PYG{n}{N\PYGZus{}i}\PYG{+w}{ }\PYG{o}{+=}\PYG{+w}{ }\PYG{n}{n1}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{n}{p}\PYG{+w}{ }\PYG{c}{\PYGZsh{} n1 * p(n1, n2)}
+\PYG{+w}{            }\PYG{k}{elseif}\PYG{+w}{ }\PYG{n}{service\PYGZus{}type}\PYG{+w}{ }\PYG{o}{==}\PYG{+w}{ }\PYG{l+m+mi}{2}
+\PYG{+w}{                }\PYG{n}{N\PYGZus{}i}\PYG{+w}{ }\PYG{o}{+=}\PYG{+w}{ }\PYG{n}{n2}\PYG{+w}{ }\PYG{o}{*}\PYG{+w}{ }\PYG{n}{p}\PYG{+w}{ }\PYG{c}{\PYGZsh{} вклад n2 * p(n1, n2)}
+\PYG{+w}{            }\PYG{k}{end}
+\PYG{+w}{        }\PYG{k}{end}
+\PYG{+w}{    }\PYG{k}{end}
+
+\PYG{+w}{    }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{N\PYGZus{}i}
+\PYG{k}{end}
+
+\PYG{c}{\PYGZsh{} 4.Определение пространства состояний системы X}
+\PYG{n}{X}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{state\PYGZus{}space}\PYG{p}{(}\PYG{n}{C}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{g}\PYG{p}{)}
+
+\PYG{n}{println}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}Число состояний |X| = \PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{length}\PYG{p}{(}\PYG{n}{X}\PYG{p}{))}
+\PYG{n}{println}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}=== Пространство состояний X ===\PYGZdq{}}\PYG{p}{)}
+\PYG{k}{for}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{n1}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{n2}\PYG{p}{)}\PYG{+w}{ }\PYG{k}{in}\PYG{+w}{ }\PYG{n}{X}
+\PYG{+w}{    }\PYG{n}{println}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}(\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{n1}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}, \PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{n2}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{})\PYGZdq{}}\PYG{p}{)}
+\PYG{k}{end}
+
+\PYG{n}{println}\PYG{p}{()}
+
+\PYG{c}{\PYGZsh{} 5. Определение множества блокировок B1 и B2}
+\PYG{n}{B1\PYGZus{}set}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{blocking\PYGZus{}set}\PYG{p}{(}\PYG{n}{X}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{C}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{g}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{)}
+
+\PYG{n}{println}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}|B1| = \PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{length}\PYG{p}{(}\PYG{n}{B1\PYGZus{}set}\PYG{p}{))}
+\PYG{n}{println}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}=== Множество блокировок 1\PYGZhy{}ого типа B1 ===\PYGZdq{}}\PYG{p}{)}
+\PYG{k}{for}\PYG{+w}{ }\PYG{n}{b}\PYG{+w}{ }\PYG{k}{in}\PYG{+w}{ }\PYG{n}{B1\PYGZus{}set}
+\PYG{+w}{    }\PYG{n}{println}\PYG{p}{(}\PYG{n}{b}\PYG{p}{)}
+\PYG{k}{end}
+
+\PYG{n}{println}\PYG{p}{()}
+
+\PYG{n}{B2\PYGZus{}set}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{blocking\PYGZus{}set}\PYG{p}{(}\PYG{n}{X}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{C}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{g}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{2}\PYG{p}{)}
+
+\PYG{n}{println}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}|B2| = \PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{length}\PYG{p}{(}\PYG{n}{B2\PYGZus{}set}\PYG{p}{))}
+\PYG{n}{println}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}=== Множество блокировок 2\PYGZhy{}ого типа B2 ===\PYGZdq{}}\PYG{p}{)}
+\PYG{k}{for}\PYG{+w}{ }\PYG{n}{b}\PYG{+w}{ }\PYG{k}{in}\PYG{+w}{ }\PYG{n}{B2\PYGZus{}set}
+\PYG{+w}{    }\PYG{n}{println}\PYG{p}{(}\PYG{n}{b}\PYG{p}{)}
+\PYG{k}{end}
+
+\PYG{n}{println}\PYG{p}{()}
+
+\PYG{c}{\PYGZsh{} 6. Определение множества приёма заявок S1 и S2}
+\PYG{n}{S1\PYGZus{}set}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{admission\PYGZus{}set}\PYG{p}{(}\PYG{n}{X}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{B1\PYGZus{}set}\PYG{p}{)}
+
+\PYG{n}{println}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}|S1| = \PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{length}\PYG{p}{(}\PYG{n}{S1\PYGZus{}set}\PYG{p}{))}
+\PYG{n}{println}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}=== Множество приёма заявок 1\PYGZhy{}ого типа S1 ===\PYGZdq{}}\PYG{p}{)}
+\PYG{k}{for}\PYG{+w}{ }\PYG{n}{s}\PYG{+w}{ }\PYG{k}{in}\PYG{+w}{ }\PYG{n}{S1\PYGZus{}set}
+\PYG{+w}{    }\PYG{n}{println}\PYG{p}{(}\PYG{n}{s}\PYG{p}{)}
+\PYG{k}{end}
+
+\PYG{n}{println}\PYG{p}{()}
+
+\PYG{n}{S2\PYGZus{}set}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{admission\PYGZus{}set}\PYG{p}{(}\PYG{n}{X}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{B2\PYGZus{}set}\PYG{p}{)}
+
+\PYG{n}{println}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}|S2| = \PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{length}\PYG{p}{(}\PYG{n}{S2\PYGZus{}set}\PYG{p}{))}
+\PYG{n}{println}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}=== Множество приёма заявок 2\PYGZhy{}ого типа S2 ===\PYGZdq{}}\PYG{p}{)}
+\PYG{k}{for}\PYG{+w}{ }\PYG{n}{s}\PYG{+w}{ }\PYG{k}{in}\PYG{+w}{ }\PYG{n}{S2\PYGZus{}set}
+\PYG{+w}{    }\PYG{n}{println}\PYG{p}{(}\PYG{n}{s}\PYG{p}{)}
+\PYG{k}{end}
+
+\PYG{n}{println}\PYG{p}{()}
+
+\PYG{c}{\PYGZsh{} 7. Расчёт и вывод стационарного распределения p(n1, n2)}
+
+\PYG{n}{total}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mf}{0.0}
+\PYG{n}{probs}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{k+kt}{Dict}\PYG{p}{\PYGZob{}}\PYG{k+kt}{Tuple}\PYG{p}{\PYGZob{}}\PYG{k+kt}{Int}\PYG{p}{,}\PYG{k+kt}{Int}\PYG{p}{\PYGZcb{},}\PYG{+w}{ }\PYG{k+kt}{Float64}\PYG{p}{\PYGZcb{}()}
+
+\PYG{n}{println}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}=== Стационарное распределение вероятностей p(n1, n2) ===\PYGZdq{}}\PYG{p}{)}
+\PYG{k}{for}\PYG{+w}{ }\PYG{n}{n1}\PYG{+w}{ }\PYG{k}{in}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{o}{:}\PYG{n}{g}
+\PYG{+w}{    }\PYG{k}{for}\PYG{+w}{ }\PYG{n}{n2}\PYG{+w}{ }\PYG{k}{in}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{o}{:}\PYG{p}{(}\PYG{n}{C}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{n}{n1}\PYG{p}{)}
+\PYG{+w}{        }\PYG{n}{p}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{stationary\PYGZus{}probability}\PYG{p}{(}\PYG{n}{rho1}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{rho2}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{n1}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{n2}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{C}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{g}\PYG{p}{)}
+\PYG{+w}{        }\PYG{n+nd}{@printf}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}p(}\PYG{l+s+si}{\PYGZpc{}d}\PYG{l+s}{,}\PYG{l+s+si}{\PYGZpc{}d}\PYG{l+s}{) = }\PYG{l+s+si}{\PYGZpc{}.10f}\PYG{l+s+se}{\PYGZbs{}n}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{n1}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{n2}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{p}\PYG{p}{)}
+\PYG{+w}{        }\PYG{k}{global}\PYG{+w}{ }\PYG{n}{total}\PYG{+w}{ }\PYG{o}{+=}\PYG{+w}{ }\PYG{n}{p}
+\PYG{+w}{        }\PYG{n}{probs}\PYG{p}{[(}\PYG{n}{n1}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{n2}\PYG{p}{)]}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{p}\PYG{+w}{ }\PYG{c}{\PYGZsh{} запоминаем вероятность состояния}
+\PYG{+w}{    }\PYG{k}{end}
+\PYG{k}{end}
+
+\PYG{c}{\PYGZsh{}\PYGZsh{} 7.1 Проверка условия нормировки}
+\PYG{n}{println}\PYG{p}{()}
+\PYG{n+nd}{@printf}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}Сумма всех вероятностей: }\PYG{l+s+si}{\PYGZpc{}.10f}\PYG{l+s+se}{\PYGZbs{}n}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{total}\PYG{p}{)}
+
+\PYG{n}{println}\PYG{p}{()}
+
+\PYG{c}{\PYGZsh{} 8. Вероятностные характеристики для введённых данных}
+
+\PYG{c}{\PYGZsh{}\PYGZsh{} 8.1 Вероятность блокировки запроса B1}
+\PYG{n}{B1}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{blocking\PYGZus{}probability}\PYG{p}{(}\PYG{n}{B1\PYGZus{}set}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{probs}\PYG{p}{)}
+\PYG{n+nd}{@printf}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}Вероятность блокировки запроса B1 = }\PYG{l+s+si}{\PYGZpc{}.10f}\PYG{l+s+se}{\PYGZbs{}n}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{B1}\PYG{p}{)}
+
+\PYG{c}{\PYGZsh{}\PYGZsh{} 8.2 Вероятность блокировки запроса B1}
+\PYG{n}{B2}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{blocking\PYGZus{}probability}\PYG{p}{(}\PYG{n}{B2\PYGZus{}set}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{probs}\PYG{p}{)}
+\PYG{n+nd}{@printf}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}Вероятность блокировки запроса B2 = }\PYG{l+s+si}{\PYGZpc{}.10f}\PYG{l+s+se}{\PYGZbs{}n}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{B2}\PYG{p}{)}
+
+\PYG{c}{\PYGZsh{}\PYGZsh{} 8.3 Среднее число обслуживаемых запросов N1}
+\PYG{n}{N1}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{average\PYGZus{}requests}\PYG{p}{(}\PYG{n}{probs}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{C}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{g}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{)}
+\PYG{n+nd}{@printf}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}Среднее число обслуживаемых запросов N1 = }\PYG{l+s+si}{\PYGZpc{}.10f}\PYG{l+s+se}{\PYGZbs{}n}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{N1}\PYG{p}{)}
+
+\PYG{c}{\PYGZsh{}\PYGZsh{} 8.4 Среднее число обслуживаемых запросов N2}
+\PYG{n}{N2}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{average\PYGZus{}requests}\PYG{p}{(}\PYG{n}{probs}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{C}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{g}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{2}\PYG{p}{)}
+\PYG{n+nd}{@printf}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}Среднее число обслуживаемых запросов N2 = }\PYG{l+s+si}{\PYGZpc{}.10f}\PYG{l+s+se}{\PYGZbs{}n}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{N2}\PYG{p}{)}
+
+\PYG{c}{\PYGZsh{}\PYGZsh{} 8.5 Среднее число обслуживаемых запросов N}
+\PYG{n}{N}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{N1}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{n}{N2}
+\PYG{n+nd}{@printf}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}Среднее число обслуживаемых запросов N = }\PYG{l+s+si}{\PYGZpc{}.10f}\PYG{l+s+se}{\PYGZbs{}n}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{N}\PYG{p}{)}
+
+\PYG{c}{\PYGZsh{} 9. Диаграмма интенсивностей переходов}
+\PYG{k}{function}\PYG{+w}{ }\PYG{n}{draw\PYGZus{}state\PYGZus{}diagram}\PYG{p}{(}\PYG{n}{X}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{B1\PYGZus{}set}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{B2\PYGZus{}set}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{C}\PYG{o}{::}\PYG{k+kt}{Int}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{g}\PYG{o}{::}\PYG{k+kt}{Int}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{lambda1}\PYG{o}{::}\PYG{k+kt}{Float64}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{lambda2}\PYG{o}{::}\PYG{k+kt}{Float64}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{mu1}\PYG{o}{::}\PYG{k+kt}{Float64}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{mu2}\PYG{o}{::}\PYG{k+kt}{Float64}\PYG{p}{)}
+\PYG{+w}{    }\PYG{n}{Xset}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{k+kt}{Set}\PYG{p}{(}\PYG{n}{X}\PYG{p}{)}\PYG{+w}{ }\PYG{c}{\PYGZsh{} множество для быстрой проверки \PYGZdq{}состояние принадлежит X\PYGZdq{}}
+
+\PYG{+w}{    }\PYG{c}{\PYGZsh{} подпись интенсивности гибели: коэффициент 1 не пишем (просто μ, а не 1μ)}
+\PYG{+w}{    }\PYG{n}{death\PYGZus{}label}\PYG{p}{(}\PYG{n}{k}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{mu\PYGZus{}sym}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{k}\PYG{+w}{ }\PYG{o}{==}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{+w}{ }\PYG{o}{?}\PYG{+w}{ }\PYG{n}{mu\PYGZus{}sym}\PYG{+w}{ }\PYG{o}{:}\PYG{+w}{ }\PYG{n}{string}\PYG{p}{(}\PYG{n}{k}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{mu\PYGZus{}sym}\PYG{p}{)}
+
+\PYG{+w}{    }\PYG{n}{plt}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{plot}\PYG{p}{(}\PYG{n}{size}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{p}{(}\PYG{l+m+mi}{750}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{850}\PYG{p}{),}
+\PYG{+w}{               }\PYG{n}{xlims}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{p}{(}\PYG{o}{\PYGZhy{}}\PYG{l+m+mf}{0.6}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{g}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{l+m+mf}{0.6}\PYG{p}{),}
+\PYG{+w}{               }\PYG{n}{ylims}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{p}{(}\PYG{o}{\PYGZhy{}}\PYG{l+m+mf}{0.6}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{C}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{l+m+mf}{0.6}\PYG{p}{),}
+\PYG{+w}{               }\PYG{n}{xticks}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{o}{:}\PYG{n}{g}\PYG{p}{,}
+\PYG{+w}{               }\PYG{n}{yticks}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{o}{:}\PYG{n}{C}\PYG{p}{,}
+\PYG{+w}{               }\PYG{n}{xlabel}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}n₁ (число запросов 1\PYGZhy{}го типа)\PYGZdq{}}\PYG{p}{,}
+\PYG{+w}{               }\PYG{n}{ylabel}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}n₂ (число запросов 2\PYGZhy{}го типа)\PYGZdq{}}\PYG{p}{,}
+\PYG{+w}{               }\PYG{n}{title}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}Диаграмма интенсивностей переходов\PYGZdq{}}\PYG{p}{,}
+\PYG{+w}{               }\PYG{n}{grid}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n+nb}{false}\PYG{p}{,}
+\PYG{+w}{               }\PYG{n}{legend}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s+ss}{:outertopright}\PYG{p}{)}
+
+\PYG{+w}{    }\PYG{c}{\PYGZsh{} стрелки переходов}
+\PYG{+w}{    }\PYG{k}{for}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{n1}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{n2}\PYG{p}{)}\PYG{+w}{ }\PYG{k}{in}\PYG{+w}{ }\PYG{n}{X}
+\PYG{+w}{        }\PYG{c}{\PYGZsh{} горизонтальные переходы: (n1, n2) \PYGZlt{}\PYGZhy{}\PYGZgt{} (n1+1, n2)}
+\PYG{+w}{        }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{n1}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{n2}\PYG{p}{)}\PYG{+w}{ }\PYG{k}{in}\PYG{+w}{ }\PYG{n}{Xset}
+\PYG{+w}{            }\PYG{c}{\PYGZsh{} вправо: λ1}
+\PYG{+w}{            }\PYG{n}{plot!}\PYG{p}{(}\PYG{n}{plt}\PYG{p}{,}\PYG{+w}{ }\PYG{p}{[}\PYG{n}{n1}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{l+m+mf}{0.2}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{n1}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{l+m+mf}{0.8}\PYG{p}{],}\PYG{+w}{ }\PYG{p}{[}\PYG{n}{n2}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{l+m+mf}{0.07}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{n2}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{l+m+mf}{0.07}\PYG{p}{],}
+\PYG{+w}{                  }\PYG{n}{arrow}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s+ss}{:closed}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{color}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s+ss}{:royalblue}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{linewidth}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mf}{1.5}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{label}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}\PYGZdq{}}\PYG{p}{)}
+\PYG{+w}{            }\PYG{n}{annotate!}\PYG{p}{(}\PYG{n}{plt}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{n1}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{l+m+mf}{0.5}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{n2}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{l+m+mf}{0.19}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{text}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}λ₁\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{9}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s+ss}{:royalblue}\PYG{p}{))}
+\PYG{+w}{            }\PYG{c}{\PYGZsh{} влево: (n1+1)·μ1}
+\PYG{+w}{            }\PYG{n}{plot!}\PYG{p}{(}\PYG{n}{plt}\PYG{p}{,}\PYG{+w}{ }\PYG{p}{[}\PYG{n}{n1}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{l+m+mf}{0.8}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{n1}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{l+m+mf}{0.2}\PYG{p}{],}\PYG{+w}{ }\PYG{p}{[}\PYG{n}{n2}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{l+m+mf}{0.07}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{n2}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{l+m+mf}{0.07}\PYG{p}{],}
+\PYG{+w}{                  }\PYG{n}{arrow}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s+ss}{:closed}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{color}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s+ss}{:gray}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{linewidth}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mf}{1.5}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{label}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}\PYGZdq{}}\PYG{p}{)}
+\PYG{+w}{            }\PYG{n}{annotate!}\PYG{p}{(}\PYG{n}{plt}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{n1}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{l+m+mf}{0.5}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{n2}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{l+m+mf}{0.19}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{text}\PYG{p}{(}\PYG{n}{death\PYGZus{}label}\PYG{p}{(}\PYG{n}{n1}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}μ₁\PYGZdq{}}\PYG{p}{),}\PYG{+w}{ }\PYG{l+m+mi}{9}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s+ss}{:gray}\PYG{p}{))}
+\PYG{+w}{        }\PYG{k}{end}
+
+\PYG{+w}{        }\PYG{c}{\PYGZsh{} вертикальные переходы: (n1, n2) \PYGZlt{}\PYGZhy{}\PYGZgt{} (n1, n2+1)}
+\PYG{+w}{        }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{n1}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{n2}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{)}\PYG{+w}{ }\PYG{k}{in}\PYG{+w}{ }\PYG{n}{Xset}
+\PYG{+w}{            }\PYG{c}{\PYGZsh{} вверх: λ2}
+\PYG{+w}{            }\PYG{n}{plot!}\PYG{p}{(}\PYG{n}{plt}\PYG{p}{,}\PYG{+w}{ }\PYG{p}{[}\PYG{n}{n1}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{l+m+mf}{0.07}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{n1}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{l+m+mf}{0.07}\PYG{p}{],}\PYG{+w}{ }\PYG{p}{[}\PYG{n}{n2}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{l+m+mf}{0.2}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{n2}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{l+m+mf}{0.8}\PYG{p}{],}
+\PYG{+w}{                  }\PYG{n}{arrow}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s+ss}{:closed}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{color}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s+ss}{:crimson}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{linewidth}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mf}{1.5}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{label}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}\PYGZdq{}}\PYG{p}{)}
+\PYG{+w}{            }\PYG{n}{annotate!}\PYG{p}{(}\PYG{n}{plt}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{n1}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{+w}{ }\PYG{l+m+mf}{0.26}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{n2}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{l+m+mf}{0.5}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{text}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}λ₂\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{9}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s+ss}{:crimson}\PYG{p}{))}
+\PYG{+w}{            }\PYG{c}{\PYGZsh{} вниз: (n2+1)·μ2}
+\PYG{+w}{            }\PYG{n}{plot!}\PYG{p}{(}\PYG{n}{plt}\PYG{p}{,}\PYG{+w}{ }\PYG{p}{[}\PYG{n}{n1}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{l+m+mf}{0.07}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{n1}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{l+m+mf}{0.07}\PYG{p}{],}\PYG{+w}{ }\PYG{p}{[}\PYG{n}{n2}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{l+m+mf}{0.8}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{n2}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{l+m+mf}{0.2}\PYG{p}{],}
+\PYG{+w}{                  }\PYG{n}{arrow}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s+ss}{:closed}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{color}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s+ss}{:seagreen}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{linewidth}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mf}{1.5}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{label}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}\PYGZdq{}}\PYG{p}{)}
+\PYG{+w}{            }\PYG{n}{annotate!}\PYG{p}{(}\PYG{n}{plt}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{n1}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{l+m+mf}{0.28}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{n2}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{l+m+mf}{0.5}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{text}\PYG{p}{(}\PYG{n}{death\PYGZus{}label}\PYG{p}{(}\PYG{n}{n2}\PYG{+w}{ }\PYG{o}{+}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}μ₂\PYGZdq{}}\PYG{p}{),}\PYG{+w}{ }\PYG{l+m+mi}{9}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s+ss}{:seagreen}\PYG{p}{))}
+\PYG{+w}{        }\PYG{k}{end}
+\PYG{+w}{    }\PYG{k}{end}
+
+\PYG{+w}{    }\PYG{c}{\PYGZsh{} состояния (кружки), раскрашенные по типу}
+\PYG{+w}{    }\PYG{n}{both}\PYG{+w}{  }\PYG{o}{=}\PYG{+w}{ }\PYG{p}{[}\PYG{n}{s}\PYG{+w}{ }\PYG{k}{for}\PYG{+w}{ }\PYG{n}{s}\PYG{+w}{ }\PYG{k}{in}\PYG{+w}{ }\PYG{n}{X}\PYG{+w}{ }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{s}\PYG{+w}{ }\PYG{k}{in}\PYG{+w}{ }\PYG{n}{B1\PYGZus{}set}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{\PYGZam{}\PYGZam{}}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{s}\PYG{+w}{ }\PYG{k}{in}\PYG{+w}{ }\PYG{n}{B2\PYGZus{}set}\PYG{p}{)]}\PYG{+w}{ }\PYG{c}{\PYGZsh{} блокируются оба типа}
+\PYG{+w}{    }\PYG{n}{only1}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{p}{[}\PYG{n}{s}\PYG{+w}{ }\PYG{k}{for}\PYG{+w}{ }\PYG{n}{s}\PYG{+w}{ }\PYG{k}{in}\PYG{+w}{ }\PYG{n}{X}\PYG{+w}{ }\PYG{k}{if}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{s}\PYG{+w}{ }\PYG{k}{in}\PYG{+w}{ }\PYG{n}{B1\PYGZus{}set}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{\PYGZam{}\PYGZam{}}\PYG{+w}{ }\PYG{o}{!}\PYG{p}{(}\PYG{n}{s}\PYG{+w}{ }\PYG{k}{in}\PYG{+w}{ }\PYG{n}{B2\PYGZus{}set}\PYG{p}{)]}\PYG{+w}{ }\PYG{c}{\PYGZsh{} блокируется только 1\PYGZhy{}й тип}
+\PYG{+w}{    }\PYG{n}{free}\PYG{+w}{  }\PYG{o}{=}\PYG{+w}{ }\PYG{p}{[}\PYG{n}{s}\PYG{+w}{ }\PYG{k}{for}\PYG{+w}{ }\PYG{n}{s}\PYG{+w}{ }\PYG{k}{in}\PYG{+w}{ }\PYG{n}{X}\PYG{+w}{ }\PYG{k}{if}\PYG{+w}{ }\PYG{o}{!}\PYG{p}{(}\PYG{n}{s}\PYG{+w}{ }\PYG{k}{in}\PYG{+w}{ }\PYG{n}{B1\PYGZus{}set}\PYG{p}{)}\PYG{+w}{ }\PYG{o}{\PYGZam{}\PYGZam{}}\PYG{+w}{ }\PYG{o}{!}\PYG{p}{(}\PYG{n}{s}\PYG{+w}{ }\PYG{k}{in}\PYG{+w}{ }\PYG{n}{B2\PYGZus{}set}\PYG{p}{)]}\PYG{+w}{ }\PYG{c}{\PYGZsh{} принимаются оба типа}
+
+\PYG{+w}{    }\PYG{n}{scatter!}\PYG{p}{(}\PYG{n}{plt}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{first}\PYG{o}{.}\PYG{p}{(}\PYG{n}{free}\PYG{p}{),}\PYG{+w}{ }\PYG{n}{last}\PYG{o}{.}\PYG{p}{(}\PYG{n}{free}\PYG{p}{),}\PYG{+w}{ }\PYG{n}{markersize}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{24}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{color}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s+ss}{:lightblue}\PYG{p}{,}
+\PYG{+w}{             }\PYG{n}{markerstrokecolor}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s+ss}{:black}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{label}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}принимаются запросы обоих типов\PYGZdq{}}\PYG{p}{)}
+\PYG{+w}{    }\PYG{n}{scatter!}\PYG{p}{(}\PYG{n}{plt}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{first}\PYG{o}{.}\PYG{p}{(}\PYG{n}{only1}\PYG{p}{),}\PYG{+w}{ }\PYG{n}{last}\PYG{o}{.}\PYG{p}{(}\PYG{n}{only1}\PYG{p}{),}\PYG{+w}{ }\PYG{n}{markersize}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{24}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{color}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s+ss}{:orange}\PYG{p}{,}
+\PYG{+w}{             }\PYG{n}{markerstrokecolor}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s+ss}{:black}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{label}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}блокируется только услуга 1 (B1)\PYGZdq{}}\PYG{p}{)}
+\PYG{+w}{    }\PYG{n}{scatter!}\PYG{p}{(}\PYG{n}{plt}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{first}\PYG{o}{.}\PYG{p}{(}\PYG{n}{both}\PYG{p}{),}\PYG{+w}{ }\PYG{n}{last}\PYG{o}{.}\PYG{p}{(}\PYG{n}{both}\PYG{p}{),}\PYG{+w}{ }\PYG{n}{markersize}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{24}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{color}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s+ss}{:tomato}\PYG{p}{,}
+\PYG{+w}{             }\PYG{n}{markerstrokecolor}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s+ss}{:black}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{label}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}блокируются обе услуги (B1 и B2)\PYGZdq{}}\PYG{p}{)}
+
+\PYG{+w}{    }\PYG{c}{\PYGZsh{} подписи внутри кружков}
+\PYG{+w}{    }\PYG{k}{for}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{n1}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{n2}\PYG{p}{)}\PYG{+w}{ }\PYG{k}{in}\PYG{+w}{ }\PYG{n}{X}
+\PYG{+w}{        }\PYG{n}{annotate!}\PYG{p}{(}\PYG{n}{plt}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{n1}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{n2}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{text}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}}\PYG{l+s+si}{\PYGZdl{}n1}\PYG{l+s}{,}\PYG{l+s+si}{\PYGZdl{}n2}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{8}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s+ss}{:black}\PYG{p}{))}
+\PYG{+w}{    }\PYG{k}{end}
+
+\PYG{+w}{    }\PYG{k}{return}\PYG{+w}{ }\PYG{n}{plt}
+\PYG{k}{end}
+
+\PYG{c}{\PYGZsh{} 10. Построние диаграммы интенсивностей переходов}
+\PYG{n}{diagram}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{draw\PYGZus{}state\PYGZus{}diagram}\PYG{p}{(}\PYG{n}{X}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{B1\PYGZus{}set}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{B2\PYGZus{}set}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{C}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{g}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{lambda1}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{lambda2}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{mu1}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{mu2}\PYG{p}{)}
+\PYG{n}{savefig}\PYG{p}{(}\PYG{n}{diagram}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}state\PYGZus{}diagram.png\PYGZdq{}}\PYG{p}{)}
+\PYG{n}{display}\PYG{p}{(}\PYG{n}{diagram}\PYG{p}{)}
+
+\PYG{c}{\PYGZsh{} 11. Расчёт данных для графиков}
+
+\PYG{c}{\PYGZsh{} Случай 1: λ2 фиксирована, меняется λ1}
+
+\PYG{n}{lambda1\PYGZus{}range}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{o}{:}\PYG{l+m+mf}{0.2}\PYG{o}{:}\PYG{l+m+mi}{16}\PYG{+w}{ }\PYG{c}{\PYGZsh{} последовательность значений λ1 с шагом 0.5}
+
+\PYG{n}{B1\PYGZus{}range\PYGZus{}lam1}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{k+kt}{Float64}\PYG{p}{[]}\PYG{+w}{ }\PYG{c}{\PYGZsh{} 4 пустых массива (результат для каждой точки диапазона)}
+\PYG{n}{B2\PYGZus{}range\PYGZus{}lam1}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{k+kt}{Float64}\PYG{p}{[]}
+\PYG{n}{N1\PYGZus{}range\PYGZus{}lam1}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{k+kt}{Float64}\PYG{p}{[]}
+\PYG{n}{N2\PYGZus{}range\PYGZus{}lam1}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{k+kt}{Float64}\PYG{p}{[]}
+
+\PYG{k}{for}\PYG{+w}{ }\PYG{n}{lam1}\PYG{+w}{ }\PYG{k}{in}\PYG{+w}{ }\PYG{n}{lambda1\PYGZus{}range}\PYG{+w}{ }\PYG{c}{\PYGZsh{} цикл \PYGZhy{} перебирает каждое значение λ1 из диапазона}
+
+\PYG{+w}{    }\PYG{n}{rho1\PYGZus{}i}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{lam1}\PYG{+w}{ }\PYG{o}{/}\PYG{+w}{ }\PYG{n}{mu1}\PYG{+w}{ }\PYG{c}{\PYGZsh{} нагрузка 1\PYGZhy{}го типа под текущее λ1}
+
+\PYG{+w}{    }\PYG{c}{\PYGZsh{} заново считаем распределение для этого λ1 и запоминаем в словаре}
+\PYG{+w}{    }\PYG{n}{probs\PYGZus{}i\PYGZus{}lam1}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{k+kt}{Dict}\PYG{p}{\PYGZob{}}\PYG{k+kt}{Tuple}\PYG{p}{\PYGZob{}}\PYG{k+kt}{Int}\PYG{p}{,}\PYG{k+kt}{Int}\PYG{p}{\PYGZcb{},}\PYG{+w}{ }\PYG{k+kt}{Float64}\PYG{p}{\PYGZcb{}()}
+\PYG{+w}{    }\PYG{k}{for}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{n1}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{n2}\PYG{p}{)}\PYG{+w}{ }\PYG{k}{in}\PYG{+w}{ }\PYG{n}{X}
+\PYG{+w}{        }\PYG{n}{probs\PYGZus{}i\PYGZus{}lam1}\PYG{p}{[(}\PYG{n}{n1}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{n2}\PYG{p}{)]}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{stationary\PYGZus{}probability}\PYG{p}{(}\PYG{n}{rho1\PYGZus{}i}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{rho2}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{n1}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{n2}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{C}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{g}\PYG{p}{)}
+\PYG{+w}{    }\PYG{k}{end}
+
+\PYG{+w}{    }\PYG{c}{\PYGZsh{} множества блокировок B1\PYGZus{}set, B2\PYGZus{}set от λ1 не зависят, берём готовые}
+\PYG{+w}{    }\PYG{n}{push!}\PYG{p}{(}\PYG{n}{B1\PYGZus{}range\PYGZus{}lam1}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{blocking\PYGZus{}probability}\PYG{p}{(}\PYG{n}{B1\PYGZus{}set}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{probs\PYGZus{}i\PYGZus{}lam1}\PYG{p}{))}
+\PYG{+w}{    }\PYG{n}{push!}\PYG{p}{(}\PYG{n}{B2\PYGZus{}range\PYGZus{}lam1}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{blocking\PYGZus{}probability}\PYG{p}{(}\PYG{n}{B2\PYGZus{}set}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{probs\PYGZus{}i\PYGZus{}lam1}\PYG{p}{))}
+\PYG{+w}{    }\PYG{n}{push!}\PYG{p}{(}\PYG{n}{N1\PYGZus{}range\PYGZus{}lam1}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{average\PYGZus{}requests}\PYG{p}{(}\PYG{n}{probs\PYGZus{}i\PYGZus{}lam1}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{C}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{g}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{))}
+\PYG{+w}{    }\PYG{n}{push!}\PYG{p}{(}\PYG{n}{N2\PYGZus{}range\PYGZus{}lam1}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{average\PYGZus{}requests}\PYG{p}{(}\PYG{n}{probs\PYGZus{}i\PYGZus{}lam1}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{C}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{g}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{2}\PYG{p}{))}
+\PYG{k}{end}
+
+\PYG{n}{N\PYGZus{}range\PYGZus{}lam1}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{N1\PYGZus{}range\PYGZus{}lam1}\PYG{+w}{ }\PYG{o}{.+}\PYG{+w}{ }\PYG{n}{N2\PYGZus{}range\PYGZus{}lam1}\PYG{+w}{ }\PYG{c}{\PYGZsh{} поэлементная сумма массивов}
+
+\PYG{c}{\PYGZsh{} Случай 2: λ1 фиксирована, меняется λ2}
+
+\PYG{n}{lambda2\PYGZus{}range}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{0}\PYG{o}{:}\PYG{l+m+mf}{0.2}\PYG{o}{:}\PYG{l+m+mi}{16}\PYG{+w}{ }\PYG{c}{\PYGZsh{} последовательность значений λ2 с шагом 0.5}
+
+\PYG{n}{B1\PYGZus{}range\PYGZus{}lam2}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{k+kt}{Float64}\PYG{p}{[]}\PYG{+w}{ }\PYG{c}{\PYGZsh{} 4 пустых массива (результат для каждой точки диапазона)}
+\PYG{n}{B2\PYGZus{}range\PYGZus{}lam2}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{k+kt}{Float64}\PYG{p}{[]}
+\PYG{n}{N1\PYGZus{}range\PYGZus{}lam2}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{k+kt}{Float64}\PYG{p}{[]}
+\PYG{n}{N2\PYGZus{}range\PYGZus{}lam2}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{k+kt}{Float64}\PYG{p}{[]}
+
+\PYG{k}{for}\PYG{+w}{ }\PYG{n}{lam2}\PYG{+w}{ }\PYG{k}{in}\PYG{+w}{ }\PYG{n}{lambda2\PYGZus{}range}\PYG{+w}{ }\PYG{c}{\PYGZsh{} цикл \PYGZhy{} перебирает каждое значение λ2 из диапазона}
+
+\PYG{+w}{    }\PYG{n}{rho2\PYGZus{}i}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{lam2}\PYG{+w}{ }\PYG{o}{/}\PYG{+w}{ }\PYG{n}{mu2}\PYG{+w}{ }\PYG{c}{\PYGZsh{} нагрузка 2\PYGZhy{}го типа под текущее λ2}
+
+\PYG{+w}{    }\PYG{c}{\PYGZsh{} заново считаем распределение для этого λ2 и запоминаем в словаре}
+\PYG{+w}{    }\PYG{n}{probs\PYGZus{}i\PYGZus{}lam2}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{k+kt}{Dict}\PYG{p}{\PYGZob{}}\PYG{k+kt}{Tuple}\PYG{p}{\PYGZob{}}\PYG{k+kt}{Int}\PYG{p}{,}\PYG{k+kt}{Int}\PYG{p}{\PYGZcb{},}\PYG{+w}{ }\PYG{k+kt}{Float64}\PYG{p}{\PYGZcb{}()}
+\PYG{+w}{    }\PYG{k}{for}\PYG{+w}{ }\PYG{p}{(}\PYG{n}{n1}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{n2}\PYG{p}{)}\PYG{+w}{ }\PYG{k}{in}\PYG{+w}{ }\PYG{n}{X}
+\PYG{+w}{        }\PYG{n}{probs\PYGZus{}i\PYGZus{}lam2}\PYG{p}{[(}\PYG{n}{n1}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{n2}\PYG{p}{)]}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{stationary\PYGZus{}probability}\PYG{p}{(}\PYG{n}{rho1}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{rho2\PYGZus{}i}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{n1}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{n2}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{C}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{g}\PYG{p}{)}
+\PYG{+w}{    }\PYG{k}{end}
+
+\PYG{+w}{    }\PYG{c}{\PYGZsh{} множества блокировок B1\PYGZus{}set, B2\PYGZus{}set от λ2 не зависят, берём готовые}
+\PYG{+w}{    }\PYG{n}{push!}\PYG{p}{(}\PYG{n}{B1\PYGZus{}range\PYGZus{}lam2}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{blocking\PYGZus{}probability}\PYG{p}{(}\PYG{n}{B1\PYGZus{}set}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{probs\PYGZus{}i\PYGZus{}lam2}\PYG{p}{))}
+\PYG{+w}{    }\PYG{n}{push!}\PYG{p}{(}\PYG{n}{B2\PYGZus{}range\PYGZus{}lam2}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{blocking\PYGZus{}probability}\PYG{p}{(}\PYG{n}{B2\PYGZus{}set}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{probs\PYGZus{}i\PYGZus{}lam2}\PYG{p}{))}
+\PYG{+w}{    }\PYG{n}{push!}\PYG{p}{(}\PYG{n}{N1\PYGZus{}range\PYGZus{}lam2}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{average\PYGZus{}requests}\PYG{p}{(}\PYG{n}{probs\PYGZus{}i\PYGZus{}lam2}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{C}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{g}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{1}\PYG{p}{))}
+\PYG{+w}{    }\PYG{n}{push!}\PYG{p}{(}\PYG{n}{N2\PYGZus{}range\PYGZus{}lam2}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{average\PYGZus{}requests}\PYG{p}{(}\PYG{n}{probs\PYGZus{}i\PYGZus{}lam2}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{C}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{g}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mi}{2}\PYG{p}{))}
+\PYG{k}{end}
+
+\PYG{n}{N\PYGZus{}range\PYGZus{}lam2}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{N1\PYGZus{}range\PYGZus{}lam2}\PYG{+w}{ }\PYG{o}{.+}\PYG{+w}{ }\PYG{n}{N2\PYGZus{}range\PYGZus{}lam2}\PYG{p}{;}\PYG{+w}{ }\PYG{c}{\PYGZsh{} поэлементная сумма массивов}
+
+\PYG{c}{\PYGZsh{} 12. Построение графиков}
+
+\PYG{c}{\PYGZsh{}№ 12.1 Графики зависимости вероятности блокировки B1 и B2 от интенсивности λ1 при фиксированном λ2}
+\PYG{n}{plot\PYGZus{}B1\PYGZus{}B2\PYGZus{}lam1}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{plot}\PYG{p}{(}\PYG{n}{lambda1\PYGZus{}range}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{B1\PYGZus{}range\PYGZus{}lam1}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{label}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}B1(λ1), λ2=}\PYG{l+s+si}{\PYGZdl{}lambda2}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{xlabel}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}Интенсивность поступающих запросов λ1\PYGZdq{}}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{ylabel}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}Вероятность блокировки B\PYGZdq{}}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{title}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}Вероятности блокировки B1(λ1) и B2(λ1)\PYGZdq{}}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{linewidth}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{2}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{color}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s+ss}{:blue}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{legend}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s+ss}{:bottomright}\PYG{p}{)}
+\PYG{n}{plot!}\PYG{p}{(}\PYG{n}{lambda1\PYGZus{}range}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{B2\PYGZus{}range\PYGZus{}lam1}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{label}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}B2(λ1), λ2=}\PYG{l+s+si}{\PYGZdl{}lambda2}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{linewidth}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{2}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{color}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s+ss}{:red}\PYG{p}{)}
+\PYG{n}{savefig}\PYG{p}{(}\PYG{n}{plot\PYGZus{}B1\PYGZus{}B2\PYGZus{}lam1}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}blocking\PYGZus{}probability\PYGZus{}B1\PYGZus{}B2\PYGZus{}lam1.png\PYGZdq{}}\PYG{p}{)}
+\PYG{n}{display}\PYG{p}{(}\PYG{n}{plot\PYGZus{}B1\PYGZus{}B2\PYGZus{}lam1}\PYG{p}{)}
+
+\PYG{c}{\PYGZsh{}№ 12.2 Графики зависимости вероятности блокировки B1 и B2 от интенсивности λ2 при фиксированном λ`}
+\PYG{n}{plot\PYGZus{}B1\PYGZus{}B2\PYGZus{}lam2}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{plot}\PYG{p}{(}\PYG{n}{lambda2\PYGZus{}range}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{B1\PYGZus{}range\PYGZus{}lam2}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{label}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}B1(λ2), λ1=}\PYG{l+s+si}{\PYGZdl{}lambda1}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{xlabel}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}Интенсивность поступающих запросов λ2\PYGZdq{}}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{ylabel}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}Вероятность блокировки B\PYGZdq{}}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{title}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}Вероятности блокировки B1(λ2) и B2(λ2)\PYGZdq{}}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{linewidth}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{2}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{color}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s+ss}{:blue}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{legend}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s+ss}{:bottomright}\PYG{p}{)}
+\PYG{n}{plot!}\PYG{p}{(}\PYG{n}{lambda2\PYGZus{}range}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{B2\PYGZus{}range\PYGZus{}lam2}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{label}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}B2(λ2), λ1=}\PYG{l+s+si}{\PYGZdl{}lambda1}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{linewidth}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{2}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{color}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s+ss}{:red}\PYG{p}{)}
+\PYG{n}{savefig}\PYG{p}{(}\PYG{n}{plot\PYGZus{}B1\PYGZus{}B2\PYGZus{}lam2}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}blocking\PYGZus{}probability\PYGZus{}B1\PYGZus{}B2\PYGZus{}lam2.png\PYGZdq{}}\PYG{p}{)}
+\PYG{n}{display}\PYG{p}{(}\PYG{n}{plot\PYGZus{}B1\PYGZus{}B2\PYGZus{}lam2}\PYG{p}{)}
+
+\PYG{c}{\PYGZsh{}№ 12.3 Графики зависимости среднего числа N1, N2 и N от интенсивности λ1 при фиксированном λ2}
+\PYG{n}{plot\PYGZus{}N1\PYGZus{}N2\PYGZus{}N\PYGZus{}lam1}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{plot}\PYG{p}{(}\PYG{n}{lambda1\PYGZus{}range}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{N1\PYGZus{}range\PYGZus{}lam1}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{label}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}N1(λ1), λ2=}\PYG{l+s+si}{\PYGZdl{}lambda2}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{xlabel}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}Интенсивность поступающих запросов λ1\PYGZdq{}}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{ylabel}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}Среднее число запросов N\PYGZdq{}}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{title}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}Среднее число запросов N1(λ1), N2(λ1) и N(λ1)\PYGZdq{}}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{linewidth}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{2}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{color}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s+ss}{:orange}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{legend}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s+ss}{:bottomright}\PYG{p}{)}
+\PYG{n}{plot!}\PYG{p}{(}\PYG{n}{lambda1\PYGZus{}range}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{N2\PYGZus{}range\PYGZus{}lam1}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{label}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}N2(λ1), λ2=}\PYG{l+s+si}{\PYGZdl{}lambda2}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{linewidth}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{2}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{color}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s+ss}{:purple}\PYG{p}{)}
+\PYG{n}{plot!}\PYG{p}{(}\PYG{n}{lambda1\PYGZus{}range}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{N\PYGZus{}range\PYGZus{}lam1}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{label}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}N(λ1), λ2=}\PYG{l+s+si}{\PYGZdl{}lambda2}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{linewidth}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{2}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{linestyle}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s+ss}{:dash}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{color}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s+ss}{:green}\PYG{p}{)}
+\PYG{n}{savefig}\PYG{p}{(}\PYG{n}{plot\PYGZus{}N1\PYGZus{}N2\PYGZus{}N\PYGZus{}lam1}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}average\PYGZus{}request\PYGZus{}N1\PYGZus{}N2\PYGZus{}N\PYGZus{}lam1.png\PYGZdq{}}\PYG{p}{)}
+\PYG{n}{display}\PYG{p}{(}\PYG{n}{plot\PYGZus{}N1\PYGZus{}N2\PYGZus{}N\PYGZus{}lam1}\PYG{p}{)}
+
+\PYG{c}{\PYGZsh{}№ 12.4 Графики зависимости среднего числа N1, N2 и N от интенсивности λ2 при фиксированном λ1}
+\PYG{n}{plot\PYGZus{}N1\PYGZus{}N2\PYGZus{}N\PYGZus{}lam2}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{plot}\PYG{p}{(}\PYG{n}{lambda2\PYGZus{}range}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{N1\PYGZus{}range\PYGZus{}lam2}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{label}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}N1(λ2), λ1=}\PYG{l+s+si}{\PYGZdl{}lambda1}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{xlabel}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}Интенсивность поступающих запросов λ2\PYGZdq{}}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{ylabel}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}Среднее число запросов N\PYGZdq{}}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{title}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}Среднее число запросов N1(λ2), N2(λ2) и N(λ2)\PYGZdq{}}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{linewidth}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{2}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{color}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s+ss}{:orange}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{legend}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s+ss}{:bottomright}\PYG{p}{)}
+\PYG{n}{plot!}\PYG{p}{(}\PYG{n}{lambda2\PYGZus{}range}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{N2\PYGZus{}range\PYGZus{}lam2}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{label}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}N2(λ2), λ1=}\PYG{l+s+si}{\PYGZdl{}lambda1}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{linewidth}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{2}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{color}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s+ss}{:purple}\PYG{p}{)}
+\PYG{n}{plot!}\PYG{p}{(}\PYG{n}{lambda2\PYGZus{}range}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{N\PYGZus{}range\PYGZus{}lam2}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{label}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}N(λ2), λ1=}\PYG{l+s+si}{\PYGZdl{}lambda1}\PYG{l+s}{\PYGZdq{}}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{linewidth}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+m+mi}{2}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{linestyle}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s+ss}{:dash}\PYG{p}{,}
+\PYG{+w}{    }\PYG{n}{color}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{l+s+ss}{:green}\PYG{p}{)}
+\PYG{n}{savefig}\PYG{p}{(}\PYG{n}{plot\PYGZus{}N1\PYGZus{}N2\PYGZus{}N\PYGZus{}lam2}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}average\PYGZus{}request\PYGZus{}N1\PYGZus{}N2\PYGZus{}N\PYGZus{}lam2.png\PYGZdq{}}\PYG{p}{)}
+\PYG{n}{display}\PYG{p}{(}\PYG{n}{plot\PYGZus{}N1\PYGZus{}N2\PYGZus{}N\PYGZus{}lam2}\PYG{p}{)}
+\end{MintedVerbatim}
